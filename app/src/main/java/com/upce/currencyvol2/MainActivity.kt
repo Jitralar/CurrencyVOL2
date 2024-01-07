@@ -24,9 +24,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.button.setOnClickListener {
             viewModel.convert(
-                binding.etFrom.text.toString(), //FIXME: a dej spravny imput
-                binding.spFromCurrency.selectedItem.toString(),
-                binding.spToCurrency.selectedItem.toString(),
+                binding.editTextNumberIMPUT.text.toString(), //FIXME: a dej spravny imput
+                binding.spinner1L.selectedItem.toString(),
+                binding.spinner2R.selectedItem.toString(),
+
             )
         }
 

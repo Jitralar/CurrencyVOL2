@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.round
 
 
-class MainViewModel @ViewModelInject constructor(
+class MainViewModel constructor(
     private val repository: MainRepository,
     private val dispathers: DispatcherProvider
 ): ViewModel() {
