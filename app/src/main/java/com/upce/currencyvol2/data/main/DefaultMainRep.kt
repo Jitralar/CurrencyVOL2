@@ -1,0 +1,26 @@
+package com.upce.currencyvol2.data.main
+
+import com.upce.currencyvol2.data.CurrencyAPI
+import com.upce.currencyvol2.data.models.CurrencyResponse
+import com.upce.currencyvol2.data.util.Resource
+import javax.inject.Inject
+
+class DefaultMainRep @Inject constructor(
+    private val api: CurrencyAPI
+) : MainRepository {
+    override suspend fun getRates(base: String): Resource<CurrencyResponse> {
+        return try {
+            val response = api.getRates(base)
+            val result = response.body()
+            if (response.isSuccessful && result != null) {
+                Resource.Success(result)
+            } else {
+                Resource.Error(response.message())
+            }
+
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "An error occurred")
+
+        }
+    }
+}
