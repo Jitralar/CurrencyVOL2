@@ -3,11 +3,11 @@ package com.upce.currencyvol2
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.upce.currencyvol2.data.main.MainViewModel
+import com.upce.currencyvol2.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-
-//TODO:ADD dagger hilt bacc
 
 
 @AndroidEntryPoint
@@ -22,9 +22,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnConvert.setOnClickListener {
+        binding.button.setOnClickListener {
             viewModel.convert(
-                binding.etFrom.text.toString(),
+                binding.etFrom.text.toString(), //FIXME: a dej spravny imput
                 binding.spFromCurrency.selectedItem.toString(),
                 binding.spToCurrency.selectedItem.toString(),
             )
