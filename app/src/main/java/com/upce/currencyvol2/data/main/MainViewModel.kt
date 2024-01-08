@@ -32,8 +32,8 @@ class MainViewModel @Inject constructor(
 
     fun convert(
         amountStr: String,
-        fromCurrency: Unit,
-        toCurrency: Unit
+        fromCurrency: String,
+        toCurrency: String
     ) {
         val fromAmount = amountStr.toFloatOrNull()
         if (fromAmount == null) {

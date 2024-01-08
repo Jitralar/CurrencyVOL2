@@ -29,27 +29,23 @@ class MainActivity : AppCompatActivity() {
         binding.button.setOnClickListener {
             viewModel.convert(
                 binding.editTextNumberIMPUT.text.toString(),
-                println(binding.spinner1L.selectedItem.toString()),
-                println(binding.spinner2R.selectedItem.toString())
+                binding.spinner1L.selectedItem.toString(),
+                binding.spinner2R.selectedItem.toString()
 
             )
         }
 
-        //FIXME launchwhenstarted
-        lifecycleScope.launch {
+        //why this old shit
+        lifecycleScope.launchWhenStarted {
             viewModel.conversion.collect { event ->
                 when(event) {
                     is MainViewModel.CurrencyEvent.Success -> {
-                        binding.textViewRESULT.setTextColor(Color.BLACK)
-                        binding.textViewRESULT.text = event.resultText //TODO: neni prosblem tu?
-
+                        binding.textViewRESULT.text = event.resultText
                     }
                     is MainViewModel.CurrencyEvent.Failure -> {
-                        //TODO: error something
                         println("error fail")
                     }
                     is MainViewModel.CurrencyEvent.Loading -> {
-                        //TODO: loading something
                         println("error loading")
                     }
                     else -> Unit
