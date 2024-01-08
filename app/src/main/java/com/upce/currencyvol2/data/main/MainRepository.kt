@@ -5,7 +5,7 @@ import com.upce.currencyvol2.data.util.Resource
 
 interface MainRepository {
 
-    suspend fun getRates(base: String): Resource<CurrencyResponse>
+    suspend fun getRates(): Resource<CurrencyResponse>
 
 
 

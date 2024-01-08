@@ -1,13 +1,13 @@
 package com.upce.currencyvol2.data.di
 
-import com.upce.currencyvol2.data.CurrencyAPI
+import com.upce.currencyvol2.data.CurrencyAPI //FIXME
 import com.upce.currencyvol2.data.main.DefaultMainRep
 import com.upce.currencyvol2.data.main.MainRepository
 import com.upce.currencyvol2.data.util.DispatcherProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.internal.managers.ApplicationComponentManager
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit
@@ -15,15 +15,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 
+private const val BASE_URL = "http://api.exchangeratesapi.io/v1/"
+
 @Module
-@InstallIn(ApplicationComponentManager::class)
+@InstallIn(SingletonComponent::class)
 
 object AppModule {
 
     @Singleton
     @Provides
     fun provideBaseUrl(): CurrencyAPI = Retrofit.Builder()
-        .baseUrl("https://api.exchangeratesapi.io/") //FIXME: dej me do separe filu + mi dej klic
+        .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(CurrencyAPI::class.java)

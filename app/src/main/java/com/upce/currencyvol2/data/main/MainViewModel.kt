@@ -5,13 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.upce.currencyvol2.data.util.DispatcherProvider
 import com.upce.currencyvol2.data.util.Resource
 import com.upce.currencyvol2.data.models.Rates
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.round
+import javax.inject.Inject
+import kotlin.math.roundToInt
 
 
-class MainViewModel constructor(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val repository: MainRepository,
     private val dispathers: DispatcherProvider
 ): ViewModel() {
@@ -28,8 +32,8 @@ class MainViewModel constructor(
 
     fun convert(
         amountStr: String,
-        fromCurrency: String,
-        toCurrency: String
+        fromCurrency: Unit,
+        toCurrency: Unit
     ) {
         val fromAmount = amountStr.toFloatOrNull()
         if (fromAmount == null) {
@@ -41,15 +45,17 @@ class MainViewModel constructor(
         //FIXME: upravit at to je jen cislo a nepouzit viewModel
         viewModelScope.launch(dispathers.io) {
             _conversion.value = CurrencyEvent.Loading
-            when (val ratesResponse = repository.getRates(fromCurrency)) {
-                is Resource.Error -> _conversion.value = CurrencyEvent.Failure(ratesResponse.message!!)
+            when (val ratesResponse = repository.getRates()) {
+                is Resource.Error -> _conversion.value =
+                    CurrencyEvent.Failure(ratesResponse.message!!)
                 is Resource.Success -> {
                     val rates = ratesResponse.data!!.rates
-                    val rate = getRateForCurrency(toCurrency, rates)
-                    if (rate == null) {
+                    val toRate = getRateForCurrency(toCurrency, rates)
+                    val fromRate = getRateForCurrency(fromCurrency, rates)
+                    if (toRate == null || fromRate == null) {
                         _conversion.value = CurrencyEvent.Failure("Unexpected error")
                     } else {
-                        val convertedCurrency = round(rate * fromAmount * 100) / 100
+                        val convertedCurrency = round(fromAmount / fromRate * toRate * 100).roundToInt() / 100.0F
                         _conversion.value = CurrencyEvent.Success(
                             convertedCurrency.toString()//FIXME: upravit at to je jen cislo
                         )
@@ -62,7 +68,6 @@ class MainViewModel constructor(
 
     private fun getRateForCurrency(currency: String, rates: Rates) =
         when (currency) {
-
             "AED" -> rates.AED
             "AFN" -> rates.AFN
             "ALL" -> rates.ALL
