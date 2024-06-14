@@ -13,7 +13,6 @@ import kotlin.math.round
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: MainRepository,
@@ -21,10 +20,10 @@ class MainViewModel @Inject constructor(
 ): ViewModel() {
 
     sealed class CurrencyEvent {
-        class Success(val resultText: String): CurrencyEvent()
-        class Failure(val errorText: String): CurrencyEvent()
-        object Loading: CurrencyEvent()
-        object Empty: CurrencyEvent()
+        class Success(val result: Float) : CurrencyEvent()
+        class Failure(val errorText: String) : CurrencyEvent()
+        object Loading : CurrencyEvent()
+        object Empty : CurrencyEvent()
     }
 
     private val _conversion = MutableStateFlow<CurrencyEvent>(CurrencyEvent.Empty)
@@ -41,8 +40,6 @@ class MainViewModel @Inject constructor(
             return
         }
 
-
-        //FIXME: upravit at to je jen cislo a nepouzit viewModel
         viewModelScope.launch(dispathers.io) {
             _conversion.value = CurrencyEvent.Loading
             when (val ratesResponse = repository.getRates()) {
@@ -56,9 +53,7 @@ class MainViewModel @Inject constructor(
                         _conversion.value = CurrencyEvent.Failure("Unexpected error")
                     } else {
                         val convertedCurrency = round(fromAmount / fromRate * toRate * 100).roundToInt() / 100.0F
-                        _conversion.value = CurrencyEvent.Success(
-                            convertedCurrency.toString()//FIXME: upravit at to je jen cislo
-                        )
+                        _conversion.value = CurrencyEvent.Success(convertedCurrency)
                     }
                 }
             }
@@ -66,7 +61,10 @@ class MainViewModel @Inject constructor(
     }
 
 
-    private fun getRateForCurrency(currency: String, rates: Rates) =
+
+
+
+        private fun getRateForCurrency(currency: String, rates: Rates): Double? =
         when (currency) {
             "AED" -> rates.AED
             "AFN" -> rates.AFN
@@ -240,6 +238,11 @@ class MainViewModel @Inject constructor(
 
             else -> null
         }
+    }
 
-}
+
+
+
+
+
 
